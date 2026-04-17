@@ -1,5 +1,6 @@
 .page {
   min-height: 100dvh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,6 +27,7 @@
 .spinner {
   width: 40px;
   height: 40px;
+  margin: 0 auto;
   border-radius: 50%;
   border: 3px solid var(--color-border);
   border-top-color: var(--color-accent);
@@ -33,7 +35,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .errorIcon {

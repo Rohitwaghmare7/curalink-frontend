@@ -7,6 +7,46 @@ import SafetyBanner from '../research/SafetyBanner';
 import AppIcon from '../common/AppIcon';
 import styles from './MessageBubble.module.css';
 
+// ── Icons ─────────────────────────────────────────────────────────────────
+const LightbulbIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.3 1.5 1.5 2.5" />
+    <path d="M9 18h6" />
+    <path d="M10 22h4" />
+  </svg>
+);
+
+const FileTextIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+    <polyline points="14 2 14 8 20 8" />
+  </svg>
+);
+
+const FlaskIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4.5 3h15" />
+    <path d="M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3" />
+    <path d="M6 14h12" />
+  </svg>
+);
+
+const UsersIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const LinkIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+  </svg>
+);
+
 // ── User bubble ───────────────────────────────────────────────────────────
 function UserBubble({ text }) {
   const lines = text.split('\n');
@@ -43,7 +83,7 @@ function Section({ title, icon, count, children, defaultOpen = true }) {
           fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
           aria-hidden="true"
         >
-          <polyline points="6 9 12 15 18 9"/>
+          <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
       {open && <div className={styles.sectionBody}>{children}</div>}
@@ -54,8 +94,8 @@ function Section({ title, icon, count, children, defaultOpen = true }) {
 // ── Stats bar ─────────────────────────────────────────────────────────────
 function StatsBar({ papers, trials, experts, sources }) {
   const items = [
-    papers  > 0 && { label: 'Papers',  value: papers,  color: '#3b82f6' },
-    trials  > 0 && { label: 'Trials',  value: trials,  color: '#10b981' },
+    papers > 0 && { label: 'Papers', value: papers, color: '#3b82f6' },
+    trials > 0 && { label: 'Trials', value: trials, color: '#10b981' },
     experts > 0 && { label: 'Experts', value: experts, color: '#8b5cf6' },
     sources > 0 && { label: 'Sources', value: sources, color: '#f59e0b' },
   ].filter(Boolean);
@@ -89,9 +129,9 @@ function AssistantBubble({ message }) {
   // Normalise clinical trials
   const normalisedTrials = (d.clinicalTrials || []).map((t, i) => ({
     ...t,
-    nctId:     t.nctId || t.id || `trial-${i}`,
+    nctId: t.nctId || t.id || `trial-${i}`,
     condition: t.condition || t.eligibility?.slice(0, 60) || '',
-    sponsor:   t.sponsor || t.contacts?.[0]?.name || '',
+    sponsor: t.sponsor || t.contacts?.[0]?.name || '',
   }));
 
   // Build research papers from sources (non-clinicaltrials)
@@ -134,13 +174,13 @@ function AssistantBubble({ message }) {
         {d.researchInsights?.length > 0 && (
           <Section
             title="Research Insights"
-            icon="💡"
+            icon={<LightbulbIcon />}
             count={d.researchInsights.length}
           >
             <ul className={styles.insightList}>
               {d.researchInsights.map((item, i) => {
                 const finding = typeof item === 'string' ? item : item?.finding || item?.text || '';
-                const source  = typeof item === 'object' ? item?.source : '';
+                const source = typeof item === 'object' ? item?.source : '';
                 return finding ? (
                   <li key={i} className={styles.insightItem}>
                     <span>{finding}</span>
@@ -156,7 +196,7 @@ function AssistantBubble({ message }) {
         {researchPapers.length > 0 && (
           <Section
             title="Research Papers"
-            icon="📄"
+            icon={<FileTextIcon />}
             count={researchPapers.length}
             defaultOpen={true}
           >
@@ -172,7 +212,7 @@ function AssistantBubble({ message }) {
         {normalisedTrials.length > 0 && (
           <Section
             title="Clinical Trials"
-            icon="🧪"
+            icon={<FlaskIcon />}
             count={normalisedTrials.length}
             defaultOpen={true}
           >
@@ -186,11 +226,11 @@ function AssistantBubble({ message }) {
 
         {/* Key Researchers */}
         {experts.length > 0 && (
-          <Section title="Key Researchers" icon="👨‍🔬" count={experts.length} defaultOpen={true}>
+          <Section title="Key Researchers" icon={<UsersIcon />} count={experts.length} defaultOpen={true}>
             <div className={styles.expertGrid}>
               {experts.map((expert, i) => {
-                const name         = typeof expert === 'string' ? expert : expert?.name || '';
-                const affiliation  = expert?.affiliation || expert?.institution || '';
+                const name = typeof expert === 'string' ? expert : expert?.name || '';
+                const affiliation = expert?.affiliation || expert?.institution || '';
                 const contribution = expert?.contribution || '';
                 return (
                   <div key={i} className={styles.expertCard}>
@@ -215,7 +255,7 @@ function AssistantBubble({ message }) {
 
         {/* All Sources */}
         {normalisedSources.length > 0 && (
-          <Section title="All Sources" icon="🔗" count={normalisedSources.length} defaultOpen={false}>
+          <Section title="All Sources" icon={<LinkIcon />} count={normalisedSources.length} defaultOpen={false}>
             <SourcesList sources={normalisedSources} />
           </Section>
         )}
@@ -224,9 +264,9 @@ function AssistantBubble({ message }) {
         {d.freshFetch && (
           <p className={styles.freshFetch}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <polyline points="23 4 23 10 17 10"/>
-              <polyline points="1 20 1 14 7 14"/>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              <polyline points="23 4 23 10 17 10" />
+              <polyline points="1 20 1 14 7 14" />
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
             </svg>
             Live data fetched from PubMed, OpenAlex &amp; ClinicalTrials
           </p>
