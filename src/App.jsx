@@ -15,6 +15,7 @@ function App() {
     return (
       <div style={{
         height: '100dvh',
+        width: '100vw',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -27,13 +28,13 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/"                element={<Navigate to="/chat" replace />} />
-      <Route path="/chat"            element={<ChatPage />} />
+      <Route path="/" element={<Navigate to="/chat" replace />} />
+      <Route path="/chat" element={<ChatPage />} />
       <Route path="/chat/:sessionId" element={<ChatPage />} />
-      <Route path="/login"           element={<LoginPage />} />
-      <Route path="/register"        element={<RegisterPage />} />
-      <Route path="/auth/callback"   element={<AuthCallbackPage />} />
-      <Route path="*"                element={<NotFoundPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
