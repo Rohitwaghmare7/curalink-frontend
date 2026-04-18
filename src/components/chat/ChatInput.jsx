@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './ChatInput.module.css';
 
-const SOURCES = ['All Sources', 'PubMed', 'OpenAlex', 'ClinicalTrials', 'Uploaded PDFs'];
+const SOURCES = ['All Sources', 'Uploaded PDFs'];
 
 export default function ChatInput({ onSend, isLoading }) {
   const [value,        setValue]        = useState('');
