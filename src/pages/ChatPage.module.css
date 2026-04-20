@@ -5,6 +5,13 @@
   overflow: hidden;
 }
 
+/* Allow scrolling in idle phase if content overflows */
+.page.idle {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+}
+
 /* ── IDLE: input + welcome centred ── */
 .idle .messages {
   display: none;
