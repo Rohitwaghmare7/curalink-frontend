@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import NotFoundPage from './pages/NotFoundPage';
 import Spinner from './components/common/Spinner';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
@@ -27,15 +28,17 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/chat" replace />} />
-      <Route path="/chat" element={<ChatPage />} />
-      <Route path="/chat/:sessionId" element={<ChatPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/auth/callback" element={<AuthCallbackPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <ErrorBoundary message="The application ran into an unexpected error. Please refresh the page.">
+      <Routes>
+        <Route path="/" element={<Navigate to="/chat" replace />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:sessionId" element={<ChatPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }
 

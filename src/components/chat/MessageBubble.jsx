@@ -116,9 +116,29 @@ function StatsBar({ papers, trials, experts, sources }) {
 }
 
 // ── Assistant bubble ──────────────────────────────────────────────────────
-function AssistantBubble({ message }) {
-  const { text, data } = message;
+function AssistantBubble({ message, onRetry }) {
+  const { text, data, isError, retryPayload, retrySource } = message;
   const d = data || {};
+
+  if (isError) {
+    return (
+      <div className={styles.assistantRow}>
+        <AppIcon size={28} className={styles.avatarIcon} />
+        <div className={styles.assistantContent}>
+          <p className={styles.assistantText}>{text}</p>
+          {onRetry && (
+            <button className={styles.retryBtn} onClick={() => onRetry(retryPayload, retrySource)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginRight: '6px' }}>
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+              Retry
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // Normalise sources
   const normalisedSources = (d.sources || []).map(s => ({
@@ -277,7 +297,7 @@ function AssistantBubble({ message }) {
   );
 }
 
-export default function MessageBubble({ message }) {
+export default function MessageBubble({ message, onRetry }) {
   if (message.role === 'user') return <UserBubble text={message.text} />;
-  return <AssistantBubble message={message} />;
+  return <AssistantBubble message={message} onRetry={onRetry} />;
 }

@@ -227,7 +227,13 @@ export default function ChatInput({ onSend, isLoading }) {
 
       <p className={styles.disclaimer}>
         Curalink may display inaccurate info — always verify with a medical professional.{' '}
-        <a href="#" className={styles.disclaimerLink}>Your Privacy &amp; Curalink</a>
+        <a
+          href="#privacy"
+          className={styles.disclaimerLink}
+          onClick={(e) => e.preventDefault()}
+        >
+          Your Privacy &amp; Curalink
+        </a>
       </p>
     </div>
   );

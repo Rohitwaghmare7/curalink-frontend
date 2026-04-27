@@ -45,6 +45,7 @@ export function useChat({ isGuest = false } = {}) {
     const patientName = isString ? undefined : payload.patientName;
     const location    = isString ? undefined : payload.location;
     const source      = isString ? _unused : (payload.source || 'All Sources');
+    const normalizedSource = source === 'All Sources' ? null : source;
 
     if (!text?.trim() || isLoading) return;
 
@@ -63,7 +64,7 @@ export function useChat({ isGuest = false } = {}) {
     if (location)    displayParts.push(`Location: ${location}`);
     const displayText = displayParts.join('\n');
 
-    const userMsg = { id: `user-${Date.now()}`, role: 'user', text: displayText, source };
+    const userMsg = { id: `user-${crypto.randomUUID()}`, role: 'user', text: displayText, source };
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
@@ -73,7 +74,7 @@ export function useChat({ isGuest = false } = {}) {
         disease,
         patientName,
         location,
-        source,
+        source: normalizedSource,
         displayText: displayText !== text ? displayText : undefined,
       }, sessionIdRef.current);
       let {
@@ -117,14 +118,22 @@ export function useChat({ isGuest = false } = {}) {
 
       setMessages((prev) => [
         ...prev,
-        { id: `ai-${Date.now()}`, role: 'assistant', text: msgText, data: msgData },
+        { id: `ai-${crypto.randomUUID()}`, role: 'assistant', text: msgText, data: msgData },
       ]);
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Something went wrong. Please try again.';
       toast.error(errMsg);
       setMessages((prev) => [
         ...prev,
-        { id: `err-${Date.now()}`, role: 'assistant', text: `⚠ ${errMsg}`, data: null },
+        {
+          id: `err-${crypto.randomUUID()}`,
+          role: 'assistant',
+          text: `⚠ ${errMsg}`,
+          data: null,
+          isError: true,
+          retryPayload: payload,
+          retrySource: source,
+        },
       ]);
     } finally {
       setIsLoading(false);
