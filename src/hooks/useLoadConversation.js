@@ -7,7 +7,7 @@ import { parseLLMResponse } from '../utils/parseLLMResponse';
 import api from '../services/api';
 
 export function useLoadConversation(sessionId) {
-  const { setMessages, setSessionId, setActiveTitle, startNewChat } = useChatContext();
+  const { setMessages, setSessionId, setActiveTitle, startNewChat, setIsChatLoading } = useChatContext();
   const { setActiveSession } = useConversationStore();
   const loadedRef = useRef(null);
 
@@ -17,6 +17,7 @@ export function useLoadConversation(sessionId) {
     loadedRef.current = sessionId;
 
     const load = async () => {
+      setIsChatLoading(true);
       try {
         const res = await api.get(`/conversations/${sessionId}`);
         const conv = res.data.data;
@@ -67,6 +68,8 @@ export function useLoadConversation(sessionId) {
         setActiveSession(sessionId, title);
       } catch {
         startNewChat();
+      } finally {
+        setIsChatLoading(false);
       }
     };
 

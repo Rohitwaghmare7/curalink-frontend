@@ -8,12 +8,14 @@ const ChatContext = createContext(null);
 export function ChatProvider({ children }) {
   const [messages, setMessages]       = useState([]);
   const [isLoading, setIsLoading]     = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const [sessionId, setSessionId]     = useState(null);
   const [activeTitle, setActiveTitle] = useState(null);
 
   const startNewChat = useCallback(() => {
     setMessages([]);
     setIsLoading(false);
+    setIsChatLoading(false);
     setSessionId(null);
     setActiveTitle(null);
   }, []);
@@ -22,6 +24,7 @@ export function ChatProvider({ children }) {
     <ChatContext.Provider value={{
       messages,    setMessages,
       isLoading,   setIsLoading,
+      isChatLoading, setIsChatLoading,
       sessionId,   setSessionId,
       activeTitle, setActiveTitle,
       startNewChat,

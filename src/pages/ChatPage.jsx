@@ -6,16 +6,19 @@ import MessageBubble from '../components/chat/MessageBubble';
 import TypingIndicator from '../components/chat/TypingIndicator';
 import WelcomeScreen from '../components/chat/WelcomeScreen';
 import ErrorBoundary from '../components/common/ErrorBoundary';
+import Spinner from '../components/common/Spinner';
 import { useChat } from '../hooks/useChat';
 import { useLoadConversation } from '../hooks/useLoadConversation';
 import { useAuth } from '../hooks/useAuth';
 import { useAuthModal } from '../context/AuthModalContext';
+import { useChatContext } from '../context/ChatContext';
 import styles from './ChatPage.module.css';
 
 export default function ChatPage() {
   const { sessionId: urlSessionId } = useParams();
   const { user } = useAuth();
   const { openLogin } = useAuthModal();
+  const { isChatLoading } = useChatContext();
   const isGuest = !user;
 
   const { messages, isLoading, sendMessage, clearChat, sessionId } = useChat({ isGuest });
@@ -62,58 +65,64 @@ export default function ChatPage() {
 
   return (
     <MainLayout onNewChat={clearChat}>
-      <div className={`${styles.page} ${styles[phase]}`}>
-
-        {/* ── Message list ── */}
-        <div className={styles.messages}>
-          {messages.map((msg) => (
-            <ErrorBoundary
-              key={msg.id}
-              fallback={
-                <div style={{
-                  padding: '10px 16px',
-                  fontSize: '13px',
-                  color: 'var(--color-error)',
-                  background: 'var(--color-bg-secondary)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--color-error)',
-                }}>
-                  ⚠ This message could not be displayed.
-                </div>
-              }
-            >
-              <MessageBubble message={msg} onRetry={sendMessage} />
-            </ErrorBoundary>
-          ))}
-          {isLoading && <TypingIndicator />}
-          <div ref={messagesEndRef} />
+      {isChatLoading ? (
+        <div className={styles.loadingWrapper}>
+          <Spinner size="lg" />
         </div>
+      ) : (
+        <div className={`${styles.page} ${styles[phase]}`}>
 
-        {/* ── Input area ── */}
-        <div className={styles.inputWrap} ref={inputWrapRef}>
-          {phase === 'idle' && <WelcomeScreen onSuggest={handleSuggest} />}
+          {/* ── Message list ── */}
+          <div className={styles.messages}>
+            {messages.map((msg) => (
+              <ErrorBoundary
+                key={msg.id}
+                fallback={
+                  <div style={{
+                    padding: '10px 16px',
+                    fontSize: '13px',
+                    color: 'var(--color-error)',
+                    background: 'var(--color-bg-secondary)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--color-error)',
+                  }}>
+                    ⚠ This message could not be displayed.
+                  </div>
+                }
+              >
+                <MessageBubble message={msg} onRetry={sendMessage} />
+              </ErrorBoundary>
+            ))}
+            {isLoading && <TypingIndicator />}
+            <div ref={messagesEndRef} />
+          </div>
 
-          {/* Guest nudge — shown after first message */}
-          {isGuest && phase === 'active' && (
-            <div className={styles.guestBanner}>
-              <span>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-                This chat won't be saved.
-              </span>
-              <button className={styles.guestLoginBtn} onClick={openLogin}>
-                Log in to save
-              </button>
-            </div>
-          )}
+          {/* ── Input area ── */}
+          <div className={styles.inputWrap} ref={inputWrapRef}>
+            {phase === 'idle' && <WelcomeScreen onSuggest={handleSuggest} />}
 
-          <ChatInput onSend={handleSend} isLoading={isLoading} />
+            {/* Guest nudge — shown after first message */}
+            {isGuest && phase === 'active' && (
+              <div className={styles.guestBanner}>
+                <span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  This chat won't be saved.
+                </span>
+                <button className={styles.guestLoginBtn} onClick={openLogin}>
+                  Log in to save
+                </button>
+              </div>
+            )}
+
+            <ChatInput onSend={handleSend} isLoading={isLoading} />
+          </div>
+
         </div>
-
-      </div>
+      )}
     </MainLayout>
   );
 }
