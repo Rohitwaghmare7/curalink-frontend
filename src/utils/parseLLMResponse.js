@@ -64,11 +64,22 @@ export function parseLLMResponse(rawContent, topLevelData = {}) {
             if (!sources?.length && parsed.sources?.length) sources = parsed.sources;
           }
         } catch {
-          // Not parseable — clean up fences and use as plain text
-          conditionOverview = conditionOverview
-            .replace(/^`{1,3}(?:json)?\s*/im, '')
-            .replace(/\s*`{1,3}\s*$/m, '')
-            .trim();
+          // Try regex extraction as a last resort for severely truncated JSON
+          const overviewMatch = conditionOverview.match(/"conditionOverview"\s*:\s*"((?:[^"\\]|\\.)*)/);
+          if (overviewMatch) {
+            try {
+              // Unescape the extracted string
+              conditionOverview = JSON.parse(`"${overviewMatch[1]}"`);
+            } catch {
+              conditionOverview = overviewMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+            }
+          } else {
+            // Not parseable — clean up fences and use as plain text
+            conditionOverview = conditionOverview
+              .replace(/^`{1,3}(?:json)?\s*/im, '')
+              .replace(/\s*`{1,3}\s*$/m, '')
+              .trim();
+          }
         }
       }
     }
