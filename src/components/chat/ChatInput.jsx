@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './ChatInput.module.css';
+import VoiceDialog from './VoiceDialog';
 
 const SOURCES = ['All Sources', 'Uploaded PDFs'];
 
@@ -11,6 +12,7 @@ export default function ChatInput({ onSend, isLoading }) {
   const [disease,      setDisease]      = useState('');
   const [patientName,  setPatientName]  = useState('');
   const [location,     setLocation]     = useState('');
+  const [voiceOpen,    setVoiceOpen]    = useState(false);
 
   const textareaRef = useRef(null);
   const sourceRef   = useRef(null);
@@ -208,20 +210,38 @@ export default function ChatInput({ onSend, isLoading }) {
             </button>
           </div>
 
-          {/* Send */}
-          <button
-            className={`${styles.sendBtn} ${canSend ? styles.sendBtnActive : ''}`}
-            onClick={handleSend}
-            disabled={!canSend}
-            aria-label="Send message"
-            title="Send"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="12" y1="19" x2="12" y2="5"/>
-              <polyline points="5 12 12 5 19 12"/>
-            </svg>
-            <span>Send</span>
-          </button>
+          <div className={styles.toolbarRight} style={{ display: 'flex', gap: '8px' }}>
+            {/* Voice Mode */}
+            <button
+              className={styles.voiceBtn}
+              onClick={() => setVoiceOpen(true)}
+              aria-label="Voice mode"
+              title="Voice Mode"
+              type="button"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+
+            {/* Send */}
+            <button
+              className={`${styles.sendBtn} ${canSend ? styles.sendBtnActive : ''}`}
+              onClick={handleSend}
+              disabled={!canSend}
+              aria-label="Send message"
+              title="Send"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="12" y1="19" x2="12" y2="5"/>
+                <polyline points="5 12 12 5 19 12"/>
+              </svg>
+              <span>Send</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -235,6 +255,8 @@ export default function ChatInput({ onSend, isLoading }) {
           Your Privacy &amp; Curalink
         </a>
       </p>
+
+      <VoiceDialog isOpen={voiceOpen} onClose={() => setVoiceOpen(false)} />
     </div>
   );
 }

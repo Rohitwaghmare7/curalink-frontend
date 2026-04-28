@@ -259,6 +259,29 @@
   color: var(--color-accent);
 }
 
+/* ── Voice button ── */
+.voiceBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.voiceBtn:hover {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-primary);
+  transform: scale(1.05);
+}
+
 /* ── Send button ── */
 .sendBtn {
   display: flex;
