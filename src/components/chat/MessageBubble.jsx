@@ -92,7 +92,7 @@ function Section({ title, icon, count, children, defaultOpen = true }) {
 }
 
 // ── Stats bar ─────────────────────────────────────────────────────────────
-function StatsBar({ papers, trials, experts, sources }) {
+function StatsBar({ papers, trials, experts, sources, totalSources }) {
   const items = [
     papers > 0 && { label: 'Papers', value: papers, color: '#3b82f6' },
     trials > 0 && { label: 'Trials', value: trials, color: '#10b981' },
@@ -100,7 +100,7 @@ function StatsBar({ papers, trials, experts, sources }) {
     sources > 0 && { label: 'Sources', value: sources, color: '#f59e0b' },
   ].filter(Boolean);
 
-  if (items.length === 0) return null;
+  if (items.length === 0 && !totalSources) return null;
 
   return (
     <div className={styles.statsBar}>
@@ -111,6 +111,11 @@ function StatsBar({ papers, trials, experts, sources }) {
           <span className={styles.statLabel}>{item.label}</span>
         </span>
       ))}
+      {totalSources > 0 && (
+        <span className={styles.statTotal}>
+          from <span className={styles.statHighlight}>{totalSources}</span> scanned sources
+        </span>
+      )}
     </div>
   );
 }
@@ -188,6 +193,7 @@ function AssistantBubble({ message, onRetry }) {
           trials={normalisedTrials.length}
           experts={experts.length}
           sources={normalisedSources.length}
+          totalSources={d.stats?.totalSources || 0}
         />
 
         {/* Research Insights */}
@@ -210,6 +216,21 @@ function AssistantBubble({ message, onRetry }) {
               })}
             </ul>
           </Section>
+        )}
+
+        {/* Patient Takeaways */}
+        {d.patientTakeaways?.length > 0 && (
+          <div className={styles.takeawaysBox}>
+            <div className={styles.takeawaysHeader}>
+              <LightbulbIcon />
+              <span>Key Takeaways for You</span>
+            </div>
+            <ul className={styles.takeawayList}>
+              {d.patientTakeaways.map((t, i) => (
+                <li key={i} className={styles.takeawayItem}>{t}</li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {/* Research Papers */}
@@ -236,6 +257,11 @@ function AssistantBubble({ message, onRetry }) {
             count={normalisedTrials.length}
             defaultOpen={true}
           >
+            {d.trialEligibilitySummary && (
+              <div className={styles.eligibilitySummary}>
+                <strong>Who can participate:</strong> {d.trialEligibilitySummary}
+              </div>
+            )}
             <div className={styles.cardList}>
               {normalisedTrials.map((trial, i) => (
                 <ClinicalTrialCard key={trial.nctId || i} trial={trial} index={i} />
@@ -278,6 +304,23 @@ function AssistantBubble({ message, onRetry }) {
           <Section title="All Sources" icon={<LinkIcon />} count={normalisedSources.length} defaultOpen={false}>
             <SourcesList sources={normalisedSources} />
           </Section>
+        )}
+
+        {/* Suggested Questions */}
+        {d.suggestedQuestions?.length > 0 && (
+          <div className={styles.questionsBox}>
+            <div className={styles.questionsHeader}>
+              <span>Questions for your doctor</span>
+            </div>
+            <div className={styles.questionsGrid}>
+              {d.suggestedQuestions.map((q, i) => (
+                <div key={i} className={styles.questionItem}>
+                  <span className={styles.questionBullet}>?</span>
+                  <span className={styles.questionText}>{q}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Live fetch indicator */}
