@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import ResearchCard from '../research/ResearchCard';
 import ClinicalTrialCard from '../research/ClinicalTrialCard';
+import ResearchTrendChart from '../research/ResearchTrendChart';
 import SourcesList from '../research/SourcesList';
 import SafetyBanner from '../research/SafetyBanner';
 import AppIcon from '../common/AppIcon';
@@ -216,6 +217,11 @@ function AssistantBubble({ message, onRetry }) {
               })}
             </ul>
           </Section>
+        )}
+
+        {/* Research Trend Chart */}
+        {d.stats?.sourceTrend && (
+          <ResearchTrendChart data={d.stats.sourceTrend} insight={d.chartInsight} />
         )}
 
         {/* Patient Takeaways */}

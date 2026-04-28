@@ -44,6 +44,11 @@ export function useLoadConversation(sessionId) {
             sources:           [],
             freshFetch:        false,
             disclaimers:       [],
+            patientTakeaways:  [],
+            suggestedQuestions: [],
+            trialEligibilitySummary: '',
+            chartInsight:      '',
+            stats:             null,
           });
 
           return {

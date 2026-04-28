@@ -11,6 +11,11 @@ export function parseLLMResponse(rawContent, topLevelData = {}) {
     sources           = [],
     freshFetch        = false,
     disclaimers       = [],
+    patientTakeaways  = [],
+    suggestedQuestions = [],
+    trialEligibilitySummary = '',
+    chartInsight      = '',
+    stats             = null,
   } = topLevelData;
 
   if (conditionOverview && typeof conditionOverview === 'string') {
@@ -42,6 +47,11 @@ export function parseLLMResponse(rawContent, topLevelData = {}) {
           if (parsed.clinicalTrials?.length)     clinicalTrials   = parsed.clinicalTrials;
           if (parsed.experts?.length)            experts          = parsed.experts;
           if (!sources?.length && parsed.sources?.length) sources = parsed.sources;
+          if (parsed.patientTakeaways?.length)  patientTakeaways  = parsed.patientTakeaways;
+          if (parsed.suggestedQuestions?.length) suggestedQuestions = parsed.suggestedQuestions;
+          if (parsed.trialEligibilitySummary)   trialEligibilitySummary = parsed.trialEligibilitySummary;
+          if (parsed.chartInsight)              chartInsight      = parsed.chartInsight;
+          if (parsed.stats)                      stats             = parsed.stats;
         }
       } catch {
         // Try bracket-repair for truncated JSON
@@ -62,6 +72,11 @@ export function parseLLMResponse(rawContent, topLevelData = {}) {
             if (parsed.clinicalTrials?.length)     clinicalTrials   = parsed.clinicalTrials;
             if (parsed.experts?.length)            experts          = parsed.experts;
             if (!sources?.length && parsed.sources?.length) sources = parsed.sources;
+            if (parsed.patientTakeaways?.length)  patientTakeaways  = parsed.patientTakeaways;
+            if (parsed.suggestedQuestions?.length) suggestedQuestions = parsed.suggestedQuestions;
+            if (parsed.trialEligibilitySummary)   trialEligibilitySummary = parsed.trialEligibilitySummary;
+            if (parsed.chartInsight)              chartInsight      = parsed.chartInsight;
+            if (parsed.stats)                      stats             = parsed.stats;
           }
         } catch {
           // Try regex extraction as a last resort for severely truncated JSON
@@ -87,6 +102,10 @@ export function parseLLMResponse(rawContent, topLevelData = {}) {
 
   return {
     text: conditionOverview || '',
-    data: { conditionOverview, researchInsights, clinicalTrials, experts, sources, freshFetch, disclaimers },
+    data: { 
+      conditionOverview, researchInsights, clinicalTrials, experts, sources, 
+      freshFetch, disclaimers, patientTakeaways, suggestedQuestions, 
+      trialEligibilitySummary, chartInsight, stats 
+    },
   };
 }

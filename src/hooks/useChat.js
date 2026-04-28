@@ -100,12 +100,16 @@ export function useChat({ isGuest = false } = {}) {
       let {
         conditionOverview, researchInsights, clinicalTrials,
         experts, sources, freshFetch, sessionId, disclaimers,
+        patientTakeaways, suggestedQuestions, trialEligibilitySummary,
+        chartInsight, stats,
       } = res.data.data;
 
       // Parse the LLM response — handles JSON code blocks, truncated JSON, plain text
       const { text: msgText, data: msgData } = parseLLMResponse(conditionOverview, {
         conditionOverview, researchInsights, clinicalTrials,
         experts, sources, freshFetch, disclaimers,
+        patientTakeaways, suggestedQuestions, trialEligibilitySummary,
+        chartInsight, stats,
       });
 
       // Merge ranking data from backend sources into parsed sources
