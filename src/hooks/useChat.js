@@ -69,14 +69,34 @@ export function useChat({ isGuest = false } = {}) {
     setIsLoading(true);
 
     try {
-      const res = await askQuestion({
-        query: text,
-        disease,
-        patientName,
-        location,
-        source: normalizedSource,
-        displayText: displayText !== text ? displayText : undefined,
-      }, sessionIdRef.current);
+      let res;
+      let attempt = 0;
+      let lastErr = null;
+      
+      while (attempt < 2) {
+        try {
+          res = await askQuestion({
+            query: text,
+            disease,
+            patientName,
+            location,
+            source: normalizedSource,
+            displayText: displayText !== text ? displayText : undefined,
+          }, sessionIdRef.current);
+          break; // Success, exit retry loop
+        } catch (err) {
+          lastErr = err;
+          attempt++;
+          const status = err.response?.status;
+          const isRetryable = !status || status >= 500;
+          if (!isRetryable || attempt >= 2) {
+            throw err; // Not retryable or out of attempts
+          }
+          // Wait 1.5s before retrying to give backend a moment to finish processing
+          await new Promise(r => setTimeout(r, 1500));
+        }
+      }
+
       let {
         conditionOverview, researchInsights, clinicalTrials,
         experts, sources, freshFetch, sessionId, disclaimers,
