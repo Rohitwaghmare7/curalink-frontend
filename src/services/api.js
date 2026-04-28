@@ -22,7 +22,9 @@ api.interceptors.response.use(
     // Only redirect on 401 if the user had a stored token (expired session)
     // NOT when they're actively trying to log in with wrong credentials
     const isAuthEndpoint = error.config?.url?.includes('/auth/');
-    if (error.response?.status === 401 && !isAuthEndpoint) {
+    const hasToken = !!localStorage.getItem('token');
+    
+    if (error.response?.status === 401 && !isAuthEndpoint && hasToken) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }

@@ -114,11 +114,14 @@ export default function VoiceDialog({ isOpen, onClose }) {
       if (synthRef.current) synthRef.current.cancel();
       if (recognitionRef.current) recognitionRef.current.abort();
 
-      // Delete temporary session from backend
+      // Delete temporary session from backend (only if authenticated)
       const sid = sessionIdRef.current;
-      api.delete(`/conversations/${sid}`).catch(() => {
-        // Silent catch: it's best-effort cleanup
-      });
+      const token = localStorage.getItem('token');
+      if (token) {
+        api.delete(`/conversations/${sid}`).catch(() => {
+          // Silent catch: it's best-effort cleanup
+        });
+      }
 
       // Reset for next time
       sessionIdRef.current = `voice-${crypto.randomUUID()}`;
